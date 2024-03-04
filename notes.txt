@@ -1,0 +1,7 @@
+FIRST(start) = "(" | "float"
+FIRST(term) = "(" | "float"
+FIRST(factor) = "(" | "float"
+
+FOLLOW(start) = "$" | + | - | * | )
+FOLLOW(term) = "$" | + | - | * | )
+FOLLOW(factor) = "$" | + | - | * | )
