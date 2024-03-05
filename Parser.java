@@ -2,7 +2,7 @@ import java.text.ParseException;
 
 public class Parser extends AbstractParser {
 	/*Grammar in LL(1) form:
-	<start> ::= <term> { "+" <term> | "-" <term }
+	<start> ::= <term> { "+" <term> | "-" <term> }
 	<term> ::= <factor> { "*" <factor> }
 	<factor> ::= "(" <start> ")" | float
 	*/
@@ -16,7 +16,7 @@ public class Parser extends AbstractParser {
 		}
 		if(!curTok.equals("$"))
 		{
-			System.out.println("Error: Found unexpected token \"" + curTok + "\"");
+			System.out.println("Error: Expected an operator or \"$\", but found \"" + curTok + "\"");
 			return -1;
 		}
 		return result;
@@ -42,7 +42,7 @@ public class Parser extends AbstractParser {
 					result -= EvaluateTerm();
 					break;
 				default:
-					throw new ParseException("Error: expected an operator", 0);
+					throw new ParseException("Error: expected an operator, but found \"" + curTok + "\"", 0);
 			}
 		}
 		return result;
@@ -81,14 +81,14 @@ public class Parser extends AbstractParser {
 			result = EvaluateStart();
 			if(!curTok.equals(")"))
 			{
-				throw new ParseException("Error: expected closing bracked, found " + curTok, 0);
+				throw new ParseException("Error: expected closing bracket, found \"" + curTok + "\"", 0);
 			}
 			curTok = lex.getNextToken();
 			return result;
 		}
 		else
 		{
-			throw new ParseException("Error: expected opening bracket or number, found " + curTok, 0);
+			throw new ParseException("Error: expected opening bracket or number, found \"" + curTok + "\"", 0);
 		}
 
 	}
