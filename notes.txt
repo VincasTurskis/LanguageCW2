@@ -5,3 +5,9 @@ FIRST(factor) = "(" | "float"
 FOLLOW(start) = "$" | + | - | * | )
 FOLLOW(term) = "$" | + | - | * | )
 FOLLOW(factor) = "$" | + | - | * | )
+
+<start> ::= <anyNext>
+<anyNext> ::= <brackets> | <numExpression>
+<brackets> ::= "(" <numExpression> ")"
+<numExpression> ::= "float" <numFollow>
+<numFollow> ::= "*" <anyNext> | "+" <anyNext> | "-" <anyNext>
