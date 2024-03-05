@@ -32,6 +32,7 @@ public class Parser extends AbstractParser {
 	{
 		if(token.equals("("))
 		{
+			System.out.println("Found opening bracket");
 			return EvaluateBrackets(token);
 		}
 		else
