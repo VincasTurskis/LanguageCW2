@@ -73,7 +73,7 @@ public class Parser extends AbstractParser {
 	}
 	private boolean EvaluateNumFollow(String token)
 	{
-		if(!token.equals("-") && !token.equals("+") && !token.equals("+"))
+		if(!token.equals("-") && !token.equals("+") && !token.equals("*"))
 		{
 			System.out.println("Missing operator");
 		}
