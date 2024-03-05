@@ -30,13 +30,20 @@ public class Parser extends AbstractParser {
 	}
 	private boolean EvaluateAnyNext(String token)
 	{
-		return EvaluateBrackets(token) || EvaluateNumExpression(token); 
+		if(token.equals("("))
+		{
+			return EvaluateBrackets(token);
+		}
+		else
+		{
+			return EvaluateNumExpression(token);
+		}
 	}
 	private boolean EvaluateBrackets(String token)
 	{
 		if(!token.equals("("))
 		{
-			System.out.println("Line 41");
+			System.out.println("Should be opening bracket");
 			return false;
 		} 
 		token = lex.getNextToken();
