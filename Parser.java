@@ -58,6 +58,7 @@ public class Parser extends AbstractParser {
 			System.out.println("Missing closing bracket");
 			return false;
 		}
+		System.out.println("Found closing bracket");
 		return true;
 	}
 	private boolean EvaluateNumExpression(String token)
@@ -68,6 +69,7 @@ public class Parser extends AbstractParser {
 			System.out.println("Failed to parse float");
 			return false;
 		}
+		System.out.println("Found number");
 		token = lex.getNextToken();
 		return EvaluateNumFollow(token);
 	}
@@ -76,7 +78,9 @@ public class Parser extends AbstractParser {
 		if(!token.equals("-") && !token.equals("+") && !token.equals("*"))
 		{
 			System.out.println("Missing operator");
+			return false;
 		}
+		System.out.println("Found operator");
 		token = lex.getNextToken();
 		return EvaluateAnyNext(token);
 	}
