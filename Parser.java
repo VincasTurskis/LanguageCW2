@@ -1,3 +1,5 @@
+import java.text.ParseException;
+
 public class Parser extends AbstractParser {
 	/*Grammar in LL(1) form:
 	<start> ::= <anyNext>
@@ -7,32 +9,29 @@ public class Parser extends AbstractParser {
 	<numFollow> ::= "*" <anyNext> | "+" <anyNext> | "-" <anyNext> | epsilon
 	*/
 	public float parseStart(){
-
-		boolean result = Evaluate();
-		if(result == true)
-		{
-			if(!curTok.equals("$"))
-			{
-				System.out.println("Found unexpected token");
-				return -1;
-			}
-			return 1;
-		}
-		else
-		{
+		float result = -1;
+		try {
+			result = Evaluate();
+		} catch (ParseException e) {
+			System.out.println(e.getMessage());
 			return -1;
 		}
+		if(!curTok.equals("$"))
+		{
+			System.out.println("Error: Found unexpected token \"" + curTok + "\"");
+			return -1;
+		}
+		return result;
 	}
 
-	private boolean Evaluate()
+	private float Evaluate() throws ParseException
 	{
 		return EvaluateAnyNext();
 	}
-	private boolean EvaluateAnyNext()
+	private float EvaluateAnyNext() throws ParseException
 	{
 		if(curTok.equals("("))
 		{
-			System.out.println("Found opening bracket");
 			return EvaluateBrackets();
 		}
 		else
@@ -40,63 +39,51 @@ public class Parser extends AbstractParser {
 			return EvaluateNumExpression();
 		}
 	}
-	private boolean EvaluateBrackets()
+	private float EvaluateBrackets() throws ParseException
 	{
+		float result = 0;
 		if(!curTok.equals("("))
 		{
-			System.out.println("Should be opening bracket");
-			return false;
+			throw new ParseException("Error: Expected opening bracket, found " + curTok, 0);
 		} 
 		curTok = lex.getNextToken();
-		if(!EvaluateAnyNext())
-		{
-			return false;
-		}
+		result = EvaluateAnyNext();
 		if(!curTok.equals(")"))
 		{
-			System.out.println("Missing closing bracket");
-			return false;
+			throw new ParseException("Error: Expected closing bracket, found " + curTok, 0);
 		}
-		System.out.println("Found closing bracket");
 		curTok = lex.getNextToken();
-		return EvaluateNumFollow();
+		return EvaluateNumFollow(result);
 	}
-	private boolean EvaluateNumExpression()
+	private float EvaluateNumExpression() throws ParseException
 	{
+		float result = 0;
 		try {
-			Float.parseFloat(curTok);
+			result = Float.parseFloat(curTok);
 		} catch (Exception e) {
-			System.out.println("Failed to parse float");
-			return false;
+			throw new ParseException("Error: Expected floating point expression, but could not parse " + curTok + " as float.", 0);
 		}
-		System.out.println("Found number");
 		curTok = lex.getNextToken();
-		return EvaluateNumFollow();
+		return EvaluateNumFollow(result);
 	}
-	private boolean EvaluateNumFollow()
+	private float EvaluateNumFollow(float originNumber) throws ParseException
 	{
 		switch (curTok) {
 			case "-":
-				System.out.println("found \"-\" operator");
 				curTok = lex.getNextToken();
-				return EvaluateAnyNext();
+				return (originNumber - EvaluateAnyNext());
 			case "+":
-				System.out.println("found \"+\" operator");
 				curTok = lex.getNextToken();
-				return EvaluateAnyNext();
+				return (originNumber + EvaluateAnyNext());
 			case "*":
-				System.out.println("found \"*\" operator");
 				curTok = lex.getNextToken();
-				return EvaluateAnyNext();
+				return (originNumber * EvaluateAnyNext());
 			case ")":
-				System.out.println("epsilon");
-				return true;
+				return originNumber;
 			case "$":
-				System.out.println("eof");
-				return true;
+				return originNumber;
 			default:
-				System.out.println("Incorrect num follow token");
-				return false;
+				throw new ParseException("Error: A number should be followed by an operator, closing bracket or EOF; Found " + curTok, 0);
 		}
 	}
 }
